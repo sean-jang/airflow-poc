@@ -1,2 +1,2 @@
-# airflow-poc
-airflow poc with docker-compose
+# airflow-poc-dags
+Airflow poc with docker
