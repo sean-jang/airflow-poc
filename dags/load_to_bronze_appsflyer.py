@@ -47,7 +47,7 @@ def load_appsflyer_geo_daily_to_s3(app_id, reattr, next_ds, **context):
 
 
 with DAG (
-    dag_id='load_appsflyer_geo_daily',
+    dag_id='load_to_bronze_appsflyer',
     start_date=datetime(2024, 1, 31),
     schedule='30 15 * * *',
     catchup=False,
@@ -85,7 +85,7 @@ with DAG (
     
     trigger_bronze_to_gold=TriggerDagRunOperator(
         task_id='trigger_bronze_to_gold',
-        trigger_dag_id='transform_to_gold_daily_appsflyer'
+        trigger_dag_id='transform_to_gold_appsflyer'
     )
 
 

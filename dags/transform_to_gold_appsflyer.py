@@ -11,7 +11,7 @@ from airflow.exceptions import AirflowException
 
 
 @dag(start_date=datetime(2024,1,31))
-def transform_to_gold_daily_appsflyer():
+def transform_to_gold_appsflyer():
     @task()
     def extract(**context):
         ti: TaskInstance = context['task_instance']
@@ -121,7 +121,8 @@ def transform_to_gold_daily_appsflyer():
                 print(f"Successful S3 put_object response. Status - {status}")
             else:
                 raise AirflowException(f"Unsuccessful S3 put_object response. Status - {status}")
+            
     extract_bronze = extract()
     transform_to_daily = transform(extract_bronze)
     load_to_s3_gold = load(transform_to_daily)
-transform_to_gold_daily_appsflyer()
+transform_to_gold_appsflyer()

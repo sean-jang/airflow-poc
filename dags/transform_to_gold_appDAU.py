@@ -70,7 +70,7 @@ def get_app_dau(ds, **context):
 
 
 with DAG(
-    dag_id='transform_to_gold_daily_appDAU',
+    dag_id='transform_to_gold_appDAU',
     start_date=datetime(2024, 1, 31),
     schedule='5 18 * * *',
     catchup=False

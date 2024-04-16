@@ -13,7 +13,7 @@ from google.oauth2.service_account import Credentials
 
 
 @dag(start_date=datetime(2024,1,31), schedule='50 23 * * *', catchup=False)
-def etl_to_bronze_daily_goodocWeb():
+def etl_GA_goodocWeb():
     @task()
     def extract(**context):
         ti: TaskInstance = context["task_instance"]
@@ -88,4 +88,4 @@ def etl_to_bronze_daily_goodocWeb():
     transform_to_daily = transform(extract_google_analytics_api)
     load_to_s3_gold = load(transform_to_daily)
 
-etl_to_bronze_daily_goodocWeb()
+etl_GA_goodocWeb()
