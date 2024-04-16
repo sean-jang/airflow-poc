@@ -7,7 +7,7 @@ from airflow.providers.amazon.aws.hook.s3 import S3Hook
 
 class Extractor(ABC):
     @abstractmethod
-    def extract(self) -> pd.DataFrame : 
+    def extract(self, bucket: str, key: str) -> pd.DataFrame : 
         ...
 
 

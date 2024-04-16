@@ -8,12 +8,13 @@ import pandas as pd
 class Transformer(ABC):
     @staticmethod
     @abstractmethod
-    def transform(self, df: pd.DataFrame) -> pd.DataFrame :
+    def transform(self, df_task_id: str, next_ds: str, **context) -> pd.DataFrame :
         ...
 
 
 class AppointmentsTransformer(Transformer):
-    def transform(df, next_ds):
+    def transform(df_task_id, next_ds, **context):
+        df = context["ti"].xcom_pull(task_dis=df_task_id)
         df["status"] = df["status"].map(
             lambda x: 1 if x in ["completed", "confirmed"] else 0
         )
@@ -31,14 +32,16 @@ class AppointmentsTransformer(Transformer):
         return df_summary
 
 class ChartReceiptsTransformer(Transformer):
-    def transform(df, next_ds):
+    def transform(df_task_id, next_ds, **context):
+        df = context["ti"].xcom_pull(task_dis=df_task_id)
         df_summary = pd.DataFrame(
             {"date_id": next_ds, "receipt_requests_dummy": len(df)}, index=[0]
         )
         return df_summary
 
 class ReceiptsTransformer(Transformer):
-    def transform(df, next_ds):
+    def transform(df_task_id, next_ds, **context):
+        df = context["ti"].xcom_pull(task_dis=df_task_id)
         df["receiptStatus"] = df["receiptStatus"].map(lambda x: 1 if x == "F05" else 0)
         df = df.groupby("sourceType").agg(
             {
@@ -62,7 +65,8 @@ class ReceiptsTransformer(Transformer):
         return df_summary
 
 class TreatmentsTransformer(Transformer):
-    def transform(df, next_ds):
+    def transform(df_task_id, next_ds, **context):
+        df = context["ti"].xcom_pull(task_dis=df_task_id)
         df["status"] = df["status"].map(
             lambda x: 1 if x in (["completion", "paid", "paiderror", "orderprescription"]) else 0
         )
@@ -99,7 +103,8 @@ class TreatmentsTransformer(Transformer):
         return df_summary
 
 class ReceiptHCTransformer(Transformer):
-    def transform(df, next_ds):
+    def transform(df_task_id, next_ds, **context):
+        df = context["ti"].xcom_pull(task_dis=df_task_id)
         df_summary = pd.DataFrame(
             {
                 "date_id": next_ds,
@@ -109,7 +114,8 @@ class ReceiptHCTransformer(Transformer):
         return df_summary
 
 class ReceiptSATransformer(Transformer):
-    def transform(df, next_ds):
+    def transform(df_task_id, next_ds, **context):
+        df = context["ti"].xcom_pull(task_dis=df_task_id)
         df["installedAt"] = df["installedAt"].map(
             lambda x: datetime.strftime(
                 datetime.strptime(x[:19], "%Y-%m-%d %H:%M:%S") + timedelta(hours=9), "%Y-%m-%d %H:%M:%S"
@@ -135,7 +141,8 @@ class ReceiptSATransformer(Transformer):
         return df_summary
 
 class DailyKeyMetricsTransformer(Transformer):
-    def transform(df):
+    def transform(df_task_id, **context):
+        df = context["ti"].xcom_pull(task_dis=df_task_id)
         df.fillna(0, inplace=True)
         df["newInstall_total"] = (
             df["newInstall_organic_aos"]
